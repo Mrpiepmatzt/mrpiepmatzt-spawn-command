@@ -1,0 +1,54 @@
+#[mrpiepmatzt spawn]
+
+options:
+    color1: <##15ed41>
+    color2: <##ff0000>
+    color3: <##8000ff>
+    color4: <##37BFF9>
+
+command /spawn:
+    usage: {@color2}/spawn
+    trigger:
+        set {_loc} to location of block at player
+        play sound "entity.experience_orb.pickaup" to player
+        loop 5 times:
+            play sound "entity.experience_orb.pickup" to player
+            ActionBar(player, "{@color1}Teleporting in &d%6-loop-value% {@color1}seconds. {@color2}((Do not move!))")
+            if {_loc} is not location of block at player:
+                play sound "item.shield.break" to player
+                ActionBar(player, "{@color2}Teleport cancelled because you moved!")
+                stop
+            wait 1 second
+        teleport player to {spawn}
+        play sound "entity.player.levelup" to player
+        ActionBar(player, "{@color1}You were teleported to spawn.")
+        if player has permission "op":
+            play sound "entity.player.levelup" to player
+            play sound "entity.enderman.teleport" to player
+            play sound "entity.player.levelup" to player
+            heal player
+            set food level of player to 20
+            teleport player to {spawn}
+
+on first join:
+    teleport player to {spawn}
+on respawn:
+	set respawn location to player's bed location ? {spawn}
+
+
+command /setspawn:
+    usage: {@color2}/setspawn
+    permission: SyntaxStudios.spawn.admin
+    permission message: {@color2}You do not have permission for that command
+    trigger:
+        set {spawn} to player's location
+        play sound "entity.player.levelup" to player
+        ActionBar(player, "{@color1}Successfully set the spawn location.")
+        send "&r" to player
+        send "&r" to player
+        send "{@color3}[mrpiepmatzt] {@color1}Successfully set the spawn location." to player
+        send "&r" to player
+        send "&r" to player
+
+function ActionBar(p: player, text: string):
+    send action bar {_text} to {_p}
